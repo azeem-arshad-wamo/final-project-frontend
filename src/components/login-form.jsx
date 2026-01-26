@@ -10,20 +10,37 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export function LoginForm({ className, ...props }) {
-  // const formik = useFormik();
+  const LoginSchema = Yup.object({
+    email: Yup.string().email().required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: LoginSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={formik.handleSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your Acme Inc account
+                  Login to account
                 </p>
               </div>
               <Field>
@@ -31,21 +48,43 @@ export function LoginForm({ className, ...props }) {
                 <Input
                   id="email"
                   type="email"
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   placeholder="m@example.com"
                   required
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.email}
+                  </p>
+                )}
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
+                  {/* <a
                     href="#"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </a> */}
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.password}
+                  </p>
+                )}
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
