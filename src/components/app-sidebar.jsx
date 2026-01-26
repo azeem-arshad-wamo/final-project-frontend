@@ -28,8 +28,9 @@ import {
 } from "@/components/ui/sidebar";
 import { LoginButton } from "./custom/LoginButton";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "../store/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrentUser, selectCurrentUser } from "../store/userSlice";
+import { useEffect } from "react";
 
 const data = {
   user: {
@@ -71,6 +72,7 @@ const data = {
 
 export function AppSidebar({ ...props }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const user = useSelector(selectCurrentUser);
   if (user) {
@@ -83,6 +85,10 @@ export function AppSidebar({ ...props }) {
   function handleLogin() {
     navigate("/login");
   }
+
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
 
   return (
     <Sidebar

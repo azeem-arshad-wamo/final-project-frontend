@@ -33,6 +33,30 @@ export const loginUser = createAsyncThunk(
   },
 );
 
+export const getCurrentUser = createAsyncThunk(
+  "user/getCurrentUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/user", {
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(
+          data.message || "Can't find info for current user",
+        );
+      }
+
+      console.log("Data Found");
+      console.log(data);
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -50,6 +74,20 @@ const userSlice = createSlice({
       store.loading = false;
       store.error = action.payload;
     });
+    builder
+      .addCase(getCurrentUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.error = action.payload;
+      });
   },
 });
 
