@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/sidebar";
 import { LoginButton } from "./custom/LoginButton";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../store/userSlice";
 
 const data = {
   user: {
@@ -68,8 +70,15 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  const user = useSelector(selectCurrentUser);
+  if (user) {
+    console.log("USER FOUND");
+    console.log(user);
+  } else {
+    console.log("No User");
+  }
 
   function handleLogin() {
     navigate("/login");

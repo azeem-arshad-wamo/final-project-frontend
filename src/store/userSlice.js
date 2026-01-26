@@ -10,26 +10,25 @@ export const loginUser = createAsyncThunk(
   "user/loginUser",
   async (info, { rejectWithValue }) => {
     try {
-      const response = await fetch("https://localhost:3000/user/login", {
+      const response = await fetch("http://localhost:3000/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: info,
+        credentials: "include",
+        body: JSON.stringify(info),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        rejectWithValue(data.message || "Login Failed");
+        return rejectWithValue(data.message || "Login Failed");
       }
 
-      console.log("Response:");
-      console.log(data);
-
-      // return data;
+      console.log("Correct Password");
+      return data;
     } catch (error) {
-      rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   },
 );
@@ -54,4 +53,5 @@ const userSlice = createSlice({
   },
 });
 
-export default userSlice;
+export default userSlice.reducer;
+export const selectCurrentUser = (store) => store.user.user;

@@ -14,9 +14,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../store/userSlice";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({ className, ...props }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const LoginSchema = Yup.object({
     email: Yup.string().email().required("Email is required"),
@@ -31,16 +35,20 @@ export function LoginForm({ className, ...props }) {
       password: "",
     },
     validationSchema: LoginSchema,
-    onSubmit: (values, { setSubmitting }) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      setError(null);
       setSubmitting(true);
       try {
         const formData = {
           email: values.email,
           password: values.password,
         };
-        dispatch(loginUser(formData));
+        await dispatch(loginUser(formData)).unwrap();
+        navigate("/");
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
+        console.log("SETTING ERROR STATE");
+        setError(error);
       } finally {
         setSubmitting(false);
       }
@@ -59,6 +67,7 @@ export function LoginForm({ className, ...props }) {
                   Login to account
                 </p>
               </div>
+              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
