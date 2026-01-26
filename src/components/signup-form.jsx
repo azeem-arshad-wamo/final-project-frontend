@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { createNewUser } from "../store/userSlice";
 
 export function SignupForm({ className, ...props }) {
   const dispatch = useDispatch();
@@ -55,8 +56,8 @@ export function SignupForm({ className, ...props }) {
           password: values.password,
         };
         console.log(formData);
-        // await dispatch().unwrap();
-        // navigate("/");
+        await dispatch(createNewUser(formData)).unwrap();
+        navigate("/");
       } catch (error) {
         console.log(error);
         console.log("SETTING ERROR STATE");

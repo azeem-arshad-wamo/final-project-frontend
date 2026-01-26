@@ -55,6 +55,34 @@ export const getCurrentUser = createAsyncThunk(
   },
 );
 
+export const createNewUser = createAsyncThunk(
+  "user/createUser",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/user/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(info),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Could not create new user");
+      }
+
+      console.log("User Created");
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const logoutUser = createAsyncThunk(
   "user/logoutUser",
   async (_, { rejectWithValue }) => {
@@ -122,6 +150,18 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
+    builder.addCase(createNewUser.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(createNewUser.fulfilled, (store, action) => {
+      store.user = action.payload;
+      store.loading = false;
+    });
+    builder.addCase(createNewUser.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
   },
 });
 
