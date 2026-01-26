@@ -93,6 +93,11 @@ export function SignupForm({ className, ...props }) {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
+                    {formik.touched.firstName && formik.errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {formik.errors.firstName}
+                      </p>
+                    )}
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="Last Name">Last Name</FieldLabel>
@@ -105,6 +110,11 @@ export function SignupForm({ className, ...props }) {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
+                    {formik.touched.lastName && formik.errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {formik.errors.lastName}
+                      </p>
+                    )}
                   </Field>
                 </Field>
               </Field>
@@ -120,6 +130,11 @@ export function SignupForm({ className, ...props }) {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.email}
+                  </p>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Password</FieldLabel>
@@ -133,6 +148,11 @@ export function SignupForm({ className, ...props }) {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.password}
+                  </p>
+                )}
               </Field>
               <Field>
                 <Button type="submit">Create Account</Button>
