@@ -8,6 +8,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -26,8 +27,8 @@ export function LoginForm({ className, ...props }) {
       password: "",
     },
     validationSchema: LoginSchema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: (values, { setSubmitting }) => {
+      setSubmitting(true);
     },
   });
 
@@ -87,7 +88,16 @@ export function LoginForm({ className, ...props }) {
                 )}
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                {formik.isSubmitting ? (
+                  <Button type="submit">
+                    <Button variant="outline" disabled>
+                      <Spinner data-icon="inline-start" />
+                      Submitting
+                    </Button>
+                  </Button>
+                ) : (
+                  <Button type="submit">Login</Button>
+                )}
               </Field>
               <FieldDescription className="text-center">
                 Don&apos;t have an account? <a href="#">Sign up</a>
