@@ -75,12 +75,6 @@ export function AppSidebar({ ...props }) {
   const dispatch = useDispatch();
 
   const user = useSelector(selectCurrentUser);
-  if (user) {
-    console.log("USER FOUND");
-    console.log(user);
-  } else {
-    console.log("No User");
-  }
 
   function handleLogin() {
     navigate("/login");

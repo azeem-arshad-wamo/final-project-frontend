@@ -48,11 +48,32 @@ export const getCurrentUser = createAsyncThunk(
         );
       }
 
-      console.log("Data Found");
-      console.log(data);
       return data;
     } catch (error) {
       rejectWithValue(error.message);
+    }
+  },
+);
+
+export const logoutUser = createAsyncThunk(
+  "user/logoutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/user/logout", {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Couldn't logout properly");
+      }
+
+      console.log("After Reponse");
+      console.log(data);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   },
 );
@@ -86,6 +107,19 @@ const userSlice = createSlice({
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
+        state.error = action.payload;
+      });
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },
