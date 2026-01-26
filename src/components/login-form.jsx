@@ -12,8 +12,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../store/userSlice";
 
 export function LoginForm({ className, ...props }) {
+  const dispatch = useDispatch();
+
   const LoginSchema = Yup.object({
     email: Yup.string().email().required("Email is required"),
     password: Yup.string()
@@ -29,6 +33,17 @@ export function LoginForm({ className, ...props }) {
     validationSchema: LoginSchema,
     onSubmit: (values, { setSubmitting }) => {
       setSubmitting(true);
+      try {
+        const formData = {
+          email: values.email,
+          password: values.password,
+        };
+        dispatch(loginUser(formData));
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
@@ -89,11 +104,9 @@ export function LoginForm({ className, ...props }) {
               </Field>
               <Field>
                 {formik.isSubmitting ? (
-                  <Button type="submit">
-                    <Button variant="outline" disabled>
-                      <Spinner data-icon="inline-start" />
-                      Submitting
-                    </Button>
+                  <Button variant="outline" disabled>
+                    <Spinner data-icon="inline-start" />
+                    Submitting
                   </Button>
                 ) : (
                   <Button type="submit">Login</Button>
