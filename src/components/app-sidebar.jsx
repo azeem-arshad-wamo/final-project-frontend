@@ -27,6 +27,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { LoginButton } from "./custom/LoginButton";
+import { useNavigate } from "react-router-dom";
 
 const data = {
   user: {
@@ -68,13 +69,10 @@ const data = {
 
 export function AppSidebar({ ...props }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   function handleLogin() {
-    setUser({
-      name: "Azeem",
-      email: "azeem@example.com",
-      avatar: "https://github.com/shadcn.png",
-    });
+    navigate("/login");
   }
 
   return (
