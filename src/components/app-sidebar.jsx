@@ -40,13 +40,13 @@ const data = {
   navMain: [
     {
       title: "Posts",
-      url: "#",
+      url: "/",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "Create new Post",
-          url: "#",
+          url: "/post/create",
         },
         {
           title: "My Posts",
