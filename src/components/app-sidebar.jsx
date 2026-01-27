@@ -50,7 +50,7 @@ const data = {
         },
         {
           title: "My Posts",
-          url: "#",
+          url: "/user/posts",
         },
         {
           title: "My Comments",
