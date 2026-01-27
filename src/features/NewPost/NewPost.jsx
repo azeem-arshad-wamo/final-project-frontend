@@ -196,7 +196,7 @@ export default function NewPost() {
                           <img
                             src={block.data}
                             alt="Image"
-                            className="object-cover w-full h-full max-h-[400px]"
+                            className="object-cover w-full h-full max-h-100"
                           />
                         </AspectRatio>
                       )}
