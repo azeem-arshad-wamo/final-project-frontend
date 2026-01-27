@@ -91,7 +91,7 @@ export default function NewPost() {
             <h1 className="text-4xl">Create New Post</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2 items-start min-w-96">
+        <div className="flex flex-col gap-2 items-start min-w-96 w-full max-w-3xl ">
           <div className="my-2">
             {title.editing ? (
               <Input
@@ -161,16 +161,54 @@ export default function NewPost() {
                     />
                   )) ||
                   (block.type === "image" && (
-                    <Input
-                      type="text"
-                      placeholder="Add image url"
-                      value={block.data}
-                      onChange={(e) => updateBlock(index, e.target.value)}
-                      onBlur={() => finishUpdating(index)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") finishUpdating(index);
-                      }}
-                    />
+                    <div className="flex flex-col gap-2 w-full">
+                      <Input
+                        type="text"
+                        placeholder="Add image URL"
+                        value={block.data}
+                        onChange={(e) => updateBlock(index, e.target.value)}
+                        className="w-full"
+                      />
+
+                      <span className="text-gray-500 text-sm">OR</span>
+
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0];
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              updateBlock(index, reader.result);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="w-full"
+                      />
+
+                      {block.data && (
+                        <AspectRatio
+                          ratio={16 / 9}
+                          className="w-full rounded-lg overflow-hidden"
+                        >
+                          <img
+                            src={block.data}
+                            alt="Image"
+                            className="object-cover w-full h-full max-h-[400px]"
+                          />
+                        </AspectRatio>
+                      )}
+
+                      <Button
+                        variant="outline"
+                        onClick={() => finishUpdating(index)}
+                        className="mt-2"
+                      >
+                        Done
+                      </Button>
+                    </div>
                   ))
                 : (block.type === "heading" && (
                     <h1 className="text-4xl ">{block.data}</h1>
