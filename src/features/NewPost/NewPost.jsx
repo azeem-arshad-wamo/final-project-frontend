@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../store/userSlice";
+import { Input } from "@/components/ui/input";
 
 export default function NewPost() {
   const [blocks, setBlocks] = useState([]);
@@ -50,7 +51,11 @@ export default function NewPost() {
   function finishUpdating(index) {
     setBlocks((prev) => {
       const updated = [...prev];
-      updated[index].editing = false;
+      if (!updated[index].data.trim()) {
+        updated.splice(index, 1);
+      } else {
+        updated[index].editing = false;
+      }
       return updated;
     });
   }
@@ -73,17 +78,18 @@ export default function NewPost() {
             <h1>Create Post Here Bitch</h1>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 items-start min-w-96">
           {blocks.length === 0 && <p>Add Blocks to get Started</p>}
 
           {blocks.map((block, index) => (
             <div key={index}>
               {block.editing
                 ? (block.type === "heading" && (
-                    <input
+                    <Input
                       type="text"
                       placeholder="Title"
                       value={block.data}
+                      className="text-4xl font-bold leading-tight py-0 w-full"
                       onChange={(e) => updateBlock(index, e.target.value)}
                       onBlur={() => finishUpdating(index)}
                       onKeyDown={(e) => {
@@ -92,10 +98,11 @@ export default function NewPost() {
                     />
                   )) ||
                   (block.type === "sub-heading" && (
-                    <input
+                    <Input
                       type="text"
                       placeholder="Sub Heading"
                       value={block.data}
+                      className="text-3xl font-semibold leading-snug py-0 w-full"
                       onChange={(e) => updateBlock(index, e.target.value)}
                       onBlur={() => finishUpdating(index)}
                       onKeyDown={(e) => {
@@ -104,9 +111,10 @@ export default function NewPost() {
                     />
                   )) ||
                   (block.type === "text" && (
-                    <input
+                    <Input
                       type="text"
                       placeholder="Text"
+                      className="text-base leading-normal py-0 w-full"
                       value={block.data}
                       onChange={(e) => updateBlock(index, e.target.value)}
                       onBlur={() => finishUpdating(index)}
@@ -116,7 +124,7 @@ export default function NewPost() {
                     />
                   )) ||
                   (block.type === "image" && (
-                    <input
+                    <Input
                       type="text"
                       placeholder="Add image url"
                       value={block.data}
@@ -131,7 +139,7 @@ export default function NewPost() {
                     <h1 className="text-4xl font-bold">{block.data}</h1>
                   )) ||
                   (block.type === "sub-heading" && (
-                    <h2 className="text-3xl">{block.data}</h2>
+                    <h2 className="text-2xl">{block.data}</h2>
                   )) ||
                   (block.type === "text" && <p>{block.data}</p>) ||
                   (block.type === "image" && (
