@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../../store/userSlice";
 import { Input } from "@/components/ui/input";
 import { createPost } from "../../store/postSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function NewPost() {
   const [blocks, setBlocks] = useState([]);
@@ -14,6 +15,7 @@ export default function NewPost() {
   });
   const [errors, setErrors] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = useSelector(selectCurrentUser);
 
   function addBlocks(type) {
@@ -82,6 +84,7 @@ export default function NewPost() {
         blocks,
       };
       await dispatch(createPost(formData)).unwrap();
+      navigate("/");
     } catch (error) {
       console.log(error);
       setErrors(error || "Failed to create post");
