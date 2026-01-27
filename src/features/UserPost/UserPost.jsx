@@ -14,12 +14,12 @@ import {
   selectCurrentUserPosts,
 } from "../../store/postSlice";
 import { selectCurrentUser } from "../../store/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function UserPost() {
   const dispatch = useDispatch();
   const post = useSelector(selectCurrentUserPosts);
   const user = useSelector(selectCurrentUser);
-  console.log(post.posts);
 
   useEffect(() => {
     dispatch(getCurrentUserPosts());
@@ -55,6 +55,8 @@ export default function UserPost() {
 }
 
 export function CardSmall({ post, index }) {
+  const navigate = useNavigate();
+
   return (
     <Card size="sm" className="mx-auto w-full max-w-sm">
       <CardHeader>
@@ -65,7 +67,12 @@ export function CardSmall({ post, index }) {
         <p>Total Number of blocks inside this post: {post.blocks.length}</p>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" size="sm" className="w-full">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => navigate(`/posts/${post.id}`)}
+        >
           View
         </Button>
       </CardFooter>
