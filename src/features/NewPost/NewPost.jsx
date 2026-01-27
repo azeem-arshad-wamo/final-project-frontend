@@ -7,9 +7,12 @@ import { Input } from "@/components/ui/input";
 
 export default function NewPost() {
   const [blocks, setBlocks] = useState([]);
+  const [title, setTitle] = useState({
+    data: null,
+    editing: true,
+  });
+  const [errors, setErrors] = useState(null);
   const user = useSelector(selectCurrentUser);
-  console.log("User Info: ");
-  console.log(user);
 
   function addBlocks(type) {
     switch (type) {
@@ -60,6 +63,16 @@ export default function NewPost() {
     });
   }
 
+  function handleSubmit() {
+    if (!title.data) {
+      setErrors("Title is needed");
+    }
+    if (blocks.length <= 0) {
+      setErrors("Cannot create post with zero blocks");
+    }
+    console.log(blocks);
+  }
+
   if (!user) {
     return (
       <>
@@ -79,6 +92,26 @@ export default function NewPost() {
           </div>
         </div>
         <div className="flex flex-col gap-2 items-start min-w-96">
+          <div className="my-2">
+            {title.editing ? (
+              <Input
+                onChange={(e) =>
+                  setTitle((prev) => ({ ...prev, data: e.target.value }))
+                }
+                placeholder="Title of the post"
+                onBlur={() => setTitle((prev) => ({ ...prev, editing: false }))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setTitle((prev) => ({ ...prev, editing: false }));
+                  }
+                }}
+              />
+            ) : (
+              <p className="text-5xl font-bold">{title.data}</p>
+            )}
+            {errors && <p className="text-red-500 text-sm mt-1">{errors}</p>}
+          </div>
+
           {blocks.length === 0 && <p>Add Blocks to get Started</p>}
 
           {blocks.map((block, index) => (
@@ -136,7 +169,7 @@ export default function NewPost() {
                     />
                   ))
                 : (block.type === "heading" && (
-                    <h1 className="text-4xl font-bold">{block.data}</h1>
+                    <h1 className="text-4xl ">{block.data}</h1>
                   )) ||
                   (block.type === "sub-heading" && (
                     <h2 className="text-2xl">{block.data}</h2>
@@ -148,19 +181,26 @@ export default function NewPost() {
             </div>
           ))}
         </div>
-        <div className="flex gap-4 border border-gray-700 p-4 rounded-lg">
-          <Button variant="outline" onClick={() => addBlocks("heading")}>
-            Heading
-          </Button>
-          <Button variant="outline" onClick={() => addBlocks("sub-heading")}>
-            Sub-Heading
-          </Button>
-          <Button variant="outline" onClick={() => addBlocks("text")}>
-            Text
-          </Button>
-          <Button variant="outline" onClick={() => addBlocks("image")}>
-            Image
-          </Button>
+        <div className="flex gap-2">
+          <div className="flex gap-4 border border-gray-700 p-4 rounded-lg">
+            <Button variant="outline" onClick={() => addBlocks("heading")}>
+              Heading
+            </Button>
+            <Button variant="outline" onClick={() => addBlocks("sub-heading")}>
+              Sub-Heading
+            </Button>
+            <Button variant="outline" onClick={() => addBlocks("text")}>
+              Text
+            </Button>
+            <Button variant="outline" onClick={() => addBlocks("image")}>
+              Image
+            </Button>
+          </div>
+          <div className="flex gap-4 border border-gray-700 p-4 rounded-lg">
+            <Button variant="outline" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </div>
         </div>
       </div>
     </>
