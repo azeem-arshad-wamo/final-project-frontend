@@ -6,6 +6,7 @@ const initialState = {
     currentUser: null,
     posts: [],
   },
+  selectedPost: null,
   loading: false,
   error: null,
 };
@@ -57,6 +58,26 @@ export const getCurrentUserPosts = createAsyncThunk(
   },
 );
 
+export const getPostById = createAsyncThunk(
+  "posts/getPostById",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/post/view?id=${info}`,
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        rejectWithValue(data.message || "Couldn't find post by that id");
+      }
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  },
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -85,8 +106,21 @@ const postSlice = createSlice({
       store.loading = false;
       store.error = action.payload;
     });
+    builder.addCase(getPostById.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(getPostById.fulfilled, (store, action) => {
+      store.selectedPost = action.payload;
+      store.loading = false;
+    });
+    builder.addCase(getPostById.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
   },
 });
 
 export default postSlice.reducer;
 export const selectCurrentUserPosts = (store) => store.posts.currentUserPost;
+export const selectCurrentSelectedPost = (store) => store.posts.selectedPost;
