@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "../../store/userSlice";
 import { Input } from "@/components/ui/input";
+import { createPost } from "../../store/postSlice";
 
 export default function NewPost() {
   const [blocks, setBlocks] = useState([]);
@@ -12,6 +13,7 @@ export default function NewPost() {
     editing: true,
   });
   const [errors, setErrors] = useState(null);
+  const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
 
   function addBlocks(type) {
@@ -63,14 +65,27 @@ export default function NewPost() {
     });
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    setErrors(null);
+
     if (!title.data) {
       setErrors("Title is needed");
+      return;
     }
     if (blocks.length <= 0) {
       setErrors("Cannot create post with zero blocks");
+      return;
     }
-    console.log(blocks);
+    try {
+      const formData = {
+        title: title.data,
+        blocks,
+      };
+      await dispatch(createPost(formData)).unwrap();
+    } catch (error) {
+      console.log(error);
+      setErrors(error || "Failed to create post");
+    }
   }
 
   if (!user) {

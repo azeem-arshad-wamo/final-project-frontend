@@ -22,12 +22,12 @@ export const createPost = createAsyncThunk(
       const data = await response.json();
 
       if (!response.ok) {
-        rejectWithValue(data.message || "Cannot create a post");
+        return rejectWithValue(data.message || "Cannot create a post");
       }
 
       return data;
     } catch (error) {
-      rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   },
 );
