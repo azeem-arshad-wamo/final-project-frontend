@@ -88,7 +88,7 @@ export default function NewPost() {
       <div className="flex flex-col items-center justify-between h-full p-5">
         <div>
           <div>
-            <h1>Create Post Here Bitch</h1>
+            <h1 className="text-4xl">Create New Post</h1>
           </div>
         </div>
         <div className="flex flex-col gap-2 items-start min-w-96">
@@ -99,9 +99,13 @@ export default function NewPost() {
                   setTitle((prev) => ({ ...prev, data: e.target.value }))
                 }
                 placeholder="Title of the post"
-                onBlur={() => setTitle((prev) => ({ ...prev, editing: false }))}
+                onBlur={() => {
+                  if (title.data) {
+                    setTitle((prev) => ({ ...prev, editing: false }));
+                  }
+                }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && title.data) {
                     setTitle((prev) => ({ ...prev, editing: false }));
                   }
                 }}
