@@ -45,15 +45,15 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Create new Post",
+          url: "#",
+        },
+        {
           title: "My Posts",
           url: "#",
         },
         {
           title: "My Comments",
-          url: "#",
-        },
-        {
-          title: "Settings",
           url: "#",
         },
       ],
