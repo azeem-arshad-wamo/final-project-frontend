@@ -2,6 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   posts: [],
+  currentUserPost: {
+    currentUser: null,
+    posts: [],
+  },
   loading: false,
   error: null,
 };
@@ -32,6 +36,27 @@ export const createPost = createAsyncThunk(
   },
 );
 
+export const getCurrentUserPosts = createAsyncThunk(
+  "posts/getUserPosts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/post", {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Could not fetch user posts");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState,
@@ -48,7 +73,20 @@ const postSlice = createSlice({
       store.loading = false;
       store.error = action.payload;
     });
+    builder.addCase(getCurrentUserPosts.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(getCurrentUserPosts.fulfilled, (store, action) => {
+      store.currentUserPost = action.payload;
+      store.loading = false;
+    });
+    builder.addCase(getCurrentUserPosts.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
   },
 });
 
 export default postSlice.reducer;
+export const selectCurrentUserPosts = (store) => store.posts.currentUserPost;
