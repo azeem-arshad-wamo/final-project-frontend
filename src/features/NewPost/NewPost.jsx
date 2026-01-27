@@ -103,163 +103,206 @@ export default function NewPost() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-between h-full p-5">
-        <div>
+      <div className="min-h-screen flex flex-col items-center py-10 px-5">
+        <div className="w-full max-w-3xl flex flex-col gap-8">
           <div>
-            <h1 className="text-4xl">Create New Post</h1>
+            <div>
+              <h1 className="text-5xl font-extrabold text-white">
+                Create New Post
+              </h1>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col gap-2 items-start min-w-96 w-full max-w-3xl ">
-          <div className="my-2">
-            {title.editing ? (
-              <Input
-                onChange={(e) =>
-                  setTitle((prev) => ({ ...prev, data: e.target.value }))
-                }
-                placeholder="Title of the post"
-                onBlur={() => {
-                  if (title.data) {
-                    setTitle((prev) => ({ ...prev, editing: false }));
+          <div className="flex flex-col gap-2 items-start min-w-96 w-full max-w-3xl ">
+            <div className="my-2 w-full">
+              {title.editing ? (
+                <Input
+                  value={title.data || ""}
+                  onChange={(e) =>
+                    setTitle((prev) => ({ ...prev, data: e.target.value }))
                   }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && title.data) {
-                    setTitle((prev) => ({ ...prev, editing: false }));
-                  }
-                }}
-              />
-            ) : (
-              <p className="text-5xl font-bold">{title.data}</p>
+                  placeholder="Enter the title..."
+                  className="text-5xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-800 text-white"
+                  onBlur={() => {
+                    if (title.data)
+                      setTitle((prev) => ({ ...prev, editing: false }));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && title.data)
+                      setTitle((prev) => ({ ...prev, editing: false }));
+                  }}
+                />
+              ) : (
+                <p className="text-5xl font-extrabold text-white">
+                  {title.data}
+                </p>
+              )}
+
+              {errors && (
+                <p className="text-red-400 text-sm mt-1 bg-red-900 p-2 rounded-md">
+                  {errors}
+                </p>
+              )}
+            </div>
+
+            {blocks.length === 0 && (
+              <p className="text-gray-400">Add Blocks to get Started</p>
             )}
-            {errors && <p className="text-red-500 text-sm mt-1">{errors}</p>}
-          </div>
 
-          {blocks.length === 0 && <p>Add Blocks to get Started</p>}
-
-          {blocks.map((block, index) => (
-            <div key={index}>
-              {block.editing
-                ? (block.type === "heading" && (
-                    <Input
-                      type="text"
-                      placeholder="Title"
-                      value={block.data}
-                      className="text-4xl font-bold leading-tight py-0 w-full"
-                      onChange={(e) => updateBlock(index, e.target.value)}
-                      onBlur={() => finishUpdating(index)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") finishUpdating(index);
-                      }}
-                    />
-                  )) ||
-                  (block.type === "sub-heading" && (
-                    <Input
-                      type="text"
-                      placeholder="Sub Heading"
-                      value={block.data}
-                      className="text-3xl font-semibold leading-snug py-0 w-full"
-                      onChange={(e) => updateBlock(index, e.target.value)}
-                      onBlur={() => finishUpdating(index)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") finishUpdating(index);
-                      }}
-                    />
-                  )) ||
-                  (block.type === "text" && (
-                    <Input
-                      type="text"
-                      placeholder="Text"
-                      className="text-base leading-normal py-0 w-full"
-                      value={block.data}
-                      onChange={(e) => updateBlock(index, e.target.value)}
-                      onBlur={() => finishUpdating(index)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") finishUpdating(index);
-                      }}
-                    />
-                  )) ||
-                  (block.type === "image" && (
-                    <div className="flex flex-col gap-2 w-full">
+            {blocks.map((block, index) => (
+              <div
+                key={index}
+                flex
+                flex-col
+                gap-2
+                p-4
+                bg-gray-800
+                rounded-lg
+                shadow-md
+              >
+                {block.editing
+                  ? (block.type === "heading" && (
                       <Input
                         type="text"
-                        placeholder="Add image URL"
+                        placeholder="Heading"
                         value={block.data}
+                        className="text-4xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
                         onChange={(e) => updateBlock(index, e.target.value)}
-                        className="w-full"
-                      />
-
-                      <span className="text-gray-500 text-sm">OR</span>
-
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            const file = e.target.files[0];
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              updateBlock(index, reader.result);
-                            };
-                            reader.readAsDataURL(file);
-                          }
+                        onBlur={() => finishUpdating(index)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") finishUpdating(index);
                         }}
-                        className="w-full"
                       />
+                    )) ||
+                    (block.type === "sub-heading" && (
+                      <Input
+                        type="text"
+                        placeholder="Sub-heading"
+                        value={block.data}
+                        className="text-3xl font-semibold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                        onChange={(e) => updateBlock(index, e.target.value)}
+                        onBlur={() => finishUpdating(index)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") finishUpdating(index);
+                        }}
+                      />
+                    )) ||
+                    (block.type === "text" && (
+                      <Input
+                        type="text"
+                        placeholder="Text"
+                        value={block.data}
+                        className="text-base placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                        onChange={(e) => updateBlock(index, e.target.value)}
+                        onBlur={() => finishUpdating(index)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") finishUpdating(index);
+                        }}
+                      />
+                    )) ||
+                    (block.type === "image" && (
+                      <div className="flex flex-col gap-2 w-full">
+                        <Input
+                          type="text"
+                          placeholder="Add image URL"
+                          value={block.data}
+                          onChange={(e) => updateBlock(index, e.target.value)}
+                          className="w-full bg-gray-700 text-white placeholder:text-gray-400 rounded-md focus:ring-2 focus:ring-indigo-500"
+                        />
 
-                      {block.data && (
-                        <AspectRatio
-                          ratio={16 / 9}
-                          className="w-full rounded-lg overflow-hidden"
+                        <span className="text-gray-400 text-sm">OR</span>
+
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              const file = e.target.files[0];
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                updateBlock(index, reader.result);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="w-full text-white"
+                        />
+
+                        {block.data && (
+                          <AspectRatio
+                            ratio={16 / 9}
+                            className="w-full rounded-lg overflow-hidden shadow-md"
+                          >
+                            <img
+                              src={block.data}
+                              alt="Image"
+                              className="object-cover w-full h-full"
+                            />
+                          </AspectRatio>
+                        )}
+
+                        <Button
+                          variant="outline"
+                          onClick={() => finishUpdating(index)}
+                          className="mt-2 border-white text-white hover:bg-indigo-600 hover:text-white"
                         >
-                          <img
-                            src={block.data}
-                            alt="Image"
-                            className="object-cover w-full h-full max-h-100"
-                          />
-                        </AspectRatio>
-                      )}
-
-                      <Button
-                        variant="outline"
-                        onClick={() => finishUpdating(index)}
-                        className="mt-2"
-                      >
-                        Done
-                      </Button>
-                    </div>
-                  ))
-                : (block.type === "heading" && (
-                    <h1 className="text-4xl ">{block.data}</h1>
-                  )) ||
-                  (block.type === "sub-heading" && (
-                    <h2 className="text-2xl">{block.data}</h2>
-                  )) ||
-                  (block.type === "text" && <p>{block.data}</p>) ||
-                  (block.type === "image" && (
-                    <img src={block.data} alt="Image" />
-                  ))}
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <div className="flex gap-4 border border-gray-700 p-4 rounded-lg">
-            <Button variant="outline" onClick={() => addBlocks("heading")}>
-              Heading
-            </Button>
-            <Button variant="outline" onClick={() => addBlocks("sub-heading")}>
-              Sub-Heading
-            </Button>
-            <Button variant="outline" onClick={() => addBlocks("text")}>
-              Text
-            </Button>
-            <Button variant="outline" onClick={() => addBlocks("image")}>
-              Image
-            </Button>
+                          Done
+                        </Button>
+                      </div>
+                    ))
+                  : (block.type === "heading" && (
+                      <h1 className="text-4xl ">{block.data}</h1>
+                    )) ||
+                    (block.type === "sub-heading" && (
+                      <h2 className="text-2xl">{block.data}</h2>
+                    )) ||
+                    (block.type === "text" && <p>{block.data}</p>) ||
+                    (block.type === "image" && (
+                      <img src={block.data} alt="Image" />
+                    ))}
+              </div>
+            ))}
           </div>
-          <div className="flex gap-4 border border-gray-700 p-4 rounded-lg">
-            <Button variant="outline" onClick={handleSubmit}>
-              Submit
-            </Button>
+          <div className="flex gap-2 flex-wrap mt-4">
+            <div className="flex gap-4 border border-gray-600 p-4 rounded-lg flex-wrap">
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("heading")}
+              >
+                Heading
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("sub-heading")}
+              >
+                Sub-Heading
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("text")}
+              >
+                Text
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("image")}
+              >
+                Image
+              </Button>
+            </div>
+
+            <div className="flex gap-4 border border-gray-600 p-4 rounded-lg">
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </div>
           </div>
         </div>
       </div>
