@@ -12,15 +12,15 @@ export default function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/" element={<Home />}>
+            <Route path="/" element={<AllPosts />} />
+
             <Route path="/post/create" element={<NewPost />} />
             <Route path="/user/posts" element={<UserPost />} />
             <Route path="/posts/:id" element={<Post />} />
-            <Route path="/posts" element={<AllPosts />} />
           </Route>
         </Routes>
       </BrowserRouter>
