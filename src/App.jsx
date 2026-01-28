@@ -6,6 +6,7 @@ import NewPost from "./features/NewPost/NewPost.jsx";
 import UserPost from "./features/UserPost/UserPost.jsx";
 import Post from "./features/Post/Post.jsx";
 import AllPosts from "./features/AllPosts/AllPosts.jsx";
+import UserComments from "./features/UserComments/UserComments.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/post/create" element={<NewPost />} />
             <Route path="/user/posts" element={<UserPost />} />
             <Route path="/posts/:id" element={<Post />} />
+            <Route path="/user/comments" element={<UserComments />} />
           </Route>
         </Routes>
       </BrowserRouter>

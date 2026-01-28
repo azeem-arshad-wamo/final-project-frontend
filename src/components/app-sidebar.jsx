@@ -49,7 +49,7 @@ const data = {
         },
         {
           title: "My Comments",
-          url: "#",
+          url: "/user/comments",
         },
       ],
     },

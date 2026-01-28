@@ -2,7 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   selectedPostComments: null,
+  userComments: [],
   loading: false,
+  error: null,
 };
 
 export const fetchCurrentPostComments = createAsyncThunk(
@@ -53,6 +55,27 @@ export const createNewComment = createAsyncThunk(
   },
 );
 
+export const fetchCurrentUserComments = createAsyncThunk(
+  "comments/userComments",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/comment", {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "No comments found");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -82,9 +105,22 @@ const commentSlice = createSlice({
       store.loading = false;
       store.error = action.payload.comments;
     });
+    builder.addCase(fetchCurrentUserComments.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(fetchCurrentUserComments.fulfilled, (store, action) => {
+      store.loading = false;
+      store.userComments = action.payload;
+    });
+    builder.addCase(fetchCurrentUserComments.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload.comments;
+    });
   },
 });
 
 export default commentSlice.reducer;
 export const selectCurrentComments = (store) =>
   store.comments.selectedPostComments;
+export const selectCurrentUserComments = (store) => store.comments.userComments;
