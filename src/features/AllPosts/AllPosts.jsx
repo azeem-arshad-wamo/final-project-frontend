@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,15 +10,26 @@ import {
 } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllPosts, selectAllPosts } from "../../store/postSlice";
+import {
+  fetchAllPosts,
+  selectAllPosts,
+  selectPostPagination,
+} from "../../store/postSlice";
+import Pagination from "@/components/custom/Pagination";
 
 export default function AllPosts() {
   const dispatch = useDispatch();
   const posts = useSelector(selectAllPosts);
+  const pagination = useSelector(selectPostPagination);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchAllPosts());
-  }, [dispatch]);
+    dispatch(fetchAllPosts({ page, limit: 20 }));
+  }, [dispatch, page]);
+
+  function handlePageChange(newPage) {
+    setPage(newPage);
+  }
 
   if (!posts) {
     return (
@@ -29,9 +40,6 @@ export default function AllPosts() {
       </>
     );
   }
-
-  console.log("Posts here");
-  console.log(posts);
 
   return (
     <>
@@ -44,6 +52,11 @@ export default function AllPosts() {
           </div>
         )}
       </div>
+      <Pagination
+        currentPage={page}
+        totalPages={pagination.totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 }

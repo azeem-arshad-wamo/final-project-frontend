@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   posts: [],
+  pagination: { total: 0, totalPages: 0, currentPage: 1, perPage: 20 },
   currentUserPost: {
     currentUser: null,
     posts: [],
@@ -13,9 +14,11 @@ const initialState = {
 
 export const fetchAllPosts = createAsyncThunk(
   "posts/fetchAllPosts",
-  async (_, { rejectWithValue }) => {
+  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:3000/post/view/all");
+      const response = await fetch(
+        `http://localhost:3000/post/view/all?page=${page}&limit=${limit}`,
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -142,7 +145,8 @@ const postSlice = createSlice({
       store.error = null;
     });
     builder.addCase(fetchAllPosts.fulfilled, (store, action) => {
-      store.posts = action.payload;
+      store.posts = action.payload.posts;
+      store.pagination = action.payload.pagination;
       store.loading = false;
     });
     builder.addCase(fetchAllPosts.rejected, (store, action) => {
@@ -157,3 +161,4 @@ export const selectCurrentUserPosts = (store) => store.posts.currentUserPost;
 export const selectCurrentSelectedPost = (store) => store.posts.selectedPost;
 export const selectAllPosts = (store) => store.posts.posts;
 export const selectPostLoading = (store) => store.posts.loading;
+export const selectPostPagination = (store) => store.posts.pagination;
