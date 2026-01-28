@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   fetchCurrentPostComments,
   selectCurrentComments,
@@ -20,6 +20,7 @@ export default function Post() {
   const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
   const comments = useSelector(selectCurrentComments) || [];
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     if (id) {
@@ -27,6 +28,11 @@ export default function Post() {
       dispatch(fetchCurrentPostComments(id));
     }
   }, [id, dispatch]);
+
+  function handleAddComment() {
+    console.log(`New Comment: ${newComment}`);
+    setNewComment("");
+  }
 
   if (loading) {
     return (
@@ -111,8 +117,17 @@ export default function Post() {
             <h2 className="text-2xl font-bold text-white">Comments</h2>
 
             <div className="flex gap-2">
-              <Input placeholder="Add a comment..." value="" onChange="" />
-              <Button>Post</Button>
+              <Input
+                placeholder="Add a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddComment();
+                  }
+                }}
+              />
+              <Button onClick={handleAddComment}>Post</Button>
             </div>
 
             {comments.length > 0 ? (
