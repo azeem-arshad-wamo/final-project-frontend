@@ -19,12 +19,12 @@ export const fetchAllPosts = createAsyncThunk(
       const data = await response.json();
 
       if (!response.ok) {
-        rejectWithValue(data.message || "Error fetching all posts");
+        return rejectWithValue(data.message || "Error fetching all posts");
       }
 
       return data;
     } catch (error) {
-      rejectWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   },
 );
