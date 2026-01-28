@@ -35,20 +35,27 @@ export default function UserPost() {
     );
   }
 
+  if (!post.posts.length > 0) {
+    return (
+      <>
+        <div className="flex items-center justify-center h-full">
+          <h1 className="text-3xl">You have not created any posts yet</h1>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        {post && post.posts && post.posts.length > 0 ? (
+        {post &&
+          post.posts &&
+          post.posts.length > 0 &&
           post.posts.map((post, index) => (
             // Something here
             <CardSmall post={post} index={index} />
             // Something also here
-          ))
-        ) : (
-          <div>
-            <h1>No Post Here</h1>
-          </div>
-        )}
+          ))}
       </div>
     </>
   );
