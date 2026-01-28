@@ -127,6 +127,7 @@ const postSlice = createSlice({
     builder.addCase(getPostById.pending, (store) => {
       store.loading = true;
       store.error = null;
+      store.selectedPost = null;
     });
     builder.addCase(getPostById.fulfilled, (store, action) => {
       store.selectedPost = action.payload;
@@ -155,3 +156,4 @@ export default postSlice.reducer;
 export const selectCurrentUserPosts = (store) => store.posts.currentUserPost;
 export const selectCurrentSelectedPost = (store) => store.posts.selectedPost;
 export const selectAllPosts = (store) => store.posts.posts;
+export const selectPostLoading = (store) => store.posts.loading;

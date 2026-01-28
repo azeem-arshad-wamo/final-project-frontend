@@ -1,11 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getPostById, selectCurrentSelectedPost } from "../../store/postSlice";
+import {
+  getPostById,
+  selectCurrentSelectedPost,
+  selectPostLoading,
+} from "../../store/postSlice";
 import { useEffect } from "react";
 
 export default function Post() {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
 
   useEffect(() => {
@@ -13,6 +18,14 @@ export default function Post() {
       dispatch(getPostById(id));
     }
   }, [id, dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <h1 className="text-2xl text-muted-foreground">Loading post…</h1>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
