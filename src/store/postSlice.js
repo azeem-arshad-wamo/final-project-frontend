@@ -11,6 +11,24 @@ const initialState = {
   error: null,
 };
 
+export const fetchAllPosts = createAsyncThunk(
+  "posts/fetchAllPosts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/post/view/all");
+      const data = await response.json();
+
+      if (!response.ok) {
+        rejectWithValue(data.message || "Error fetching all posts");
+      }
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  },
+);
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (info, { rejectWithValue }) => {
@@ -115,6 +133,18 @@ const postSlice = createSlice({
       store.loading = false;
     });
     builder.addCase(getPostById.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
+    builder.addCase(fetchAllPosts.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(fetchAllPosts.fulfilled, (store, action) => {
+      store.posts = action.payload;
+      store.loading = false;
+    });
+    builder.addCase(fetchAllPosts.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload;
     });
