@@ -5,6 +5,10 @@ import {
   selectCurrentSelectedPost,
   selectPostLoading,
 } from "../../store/postSlice";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { useEffect } from "react";
 
 export default function Post() {
@@ -12,6 +16,7 @@ export default function Post() {
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
+  const [comments, setComments] = useState(post?.comments || []);
 
   useEffect(() => {
     if (id) {
@@ -36,8 +41,6 @@ export default function Post() {
       </>
     );
   }
-  console.log(`ID from params: ${id}`);
-  console.log(post.blocks);
 
   return (
     <>
@@ -98,6 +101,31 @@ export default function Post() {
               <p className="text-2xl font-bold text-gray-400">
                 No Blocks Found
               </p>
+            )}
+          </div>
+          <div className="w-full max-w-3xl mt-10 flex flex-col gap-4">
+            <h2 className="text-2xl font-bold text-white">Comments</h2>
+
+            <div className="flex gap-2">
+              <Input placeholder="Add a comment..." value="" onChange="" />
+              <Button>Post</Button>
+            </div>
+
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <Card key={comment.id} className="bg-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">
+                      User: {comment.userId}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-gray-300">
+                    {comment.content}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p className="text-gray-400 mt-2">No comments yet</p>
             )}
           </div>
         </div>
