@@ -8,19 +8,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
 import { useEffect } from "react";
+import {
+  fetchCurrentPostComments,
+  selectCurrentComments,
+} from "../../store/commentSlice";
 
 export default function Post() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
-  const [comments, setComments] = useState(post?.comments || []);
+  const comments = useSelector(selectCurrentComments) || [];
 
   useEffect(() => {
     if (id) {
       dispatch(getPostById(id));
+      dispatch(fetchCurrentPostComments(id));
     }
   }, [id, dispatch]);
 
@@ -113,7 +117,7 @@ export default function Post() {
 
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <Card key={comment.id} className="bg-gray-800">
+                <Card key={comment.id}>
                   <CardHeader>
                     <CardTitle className="text-white">
                       User: {comment.userId}
