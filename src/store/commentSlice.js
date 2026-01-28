@@ -24,6 +24,35 @@ export const fetchCurrentPostComments = createAsyncThunk(
   },
 );
 
+export const createNewComment = createAsyncThunk(
+  "comments/newComment",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(info),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.messge || "Couldnt create comment");
+      }
+
+      console.log("Created Comment ");
+      console.log(data);
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -39,6 +68,17 @@ const commentSlice = createSlice({
       store.selectedPostComments = action.payload;
     });
     builder.addCase(fetchCurrentPostComments.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload.comments;
+    });
+    builder.addCase(createNewComment.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(createNewComment.fulfilled, (store) => {
+      store.loading = false;
+    });
+    builder.addCase(createNewComment.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload.comments;
     });

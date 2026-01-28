@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import {
+  createNewComment,
   fetchCurrentPostComments,
   selectCurrentComments,
 } from "../../store/commentSlice";
@@ -21,6 +22,7 @@ export default function Post() {
   const post = useSelector(selectCurrentSelectedPost);
   const comments = useSelector(selectCurrentComments) || [];
   const [newComment, setNewComment] = useState("");
+  const [errors, setErrors] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -29,9 +31,23 @@ export default function Post() {
     }
   }, [id, dispatch]);
 
-  function handleAddComment() {
-    console.log(`New Comment: ${newComment}`);
-    setNewComment("");
+  async function handleAddComment() {
+    if (newComment.trim() === "") return;
+
+    try {
+      const dispatchResult = await dispatch(
+        createNewComment({ postId: id, content: newComment }),
+      );
+
+      if (createNewComment.fulfilled.match(dispatchResult)) {
+        dispatch(fetchCurrentPostComments(id));
+        setNewComment("");
+      } else {
+        setErrors(dispatchResult.payload || "Could not post comment");
+      }
+    } catch (error) {
+      setErrors(error.message);
+    }
   }
 
   if (loading) {
@@ -128,6 +144,11 @@ export default function Post() {
                 }}
               />
               <Button onClick={handleAddComment}>Post</Button>
+              {errors && (
+                <p className="text-red-400 text-sm mt-1 bg-red-900 p-2 rounded-md">
+                  {errors}
+                </p>
+              )}
             </div>
 
             {comments.length > 0 ? (
