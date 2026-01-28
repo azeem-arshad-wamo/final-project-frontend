@@ -40,7 +40,7 @@ const data = {
   navMain: [
     {
       title: "Posts",
-      url: "/",
+      url: "/posts",
       icon: SquareTerminal,
       isActive: true,
       items: [
