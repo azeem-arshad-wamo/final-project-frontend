@@ -36,7 +36,6 @@ export default function Pagination({
   return (
     <UIPagination>
       <PaginationContent className="flex justify-center gap-1 mt-4">
-        {/* Previous Button */}
         <PaginationItem>
           <PaginationPrevious
             href="#"

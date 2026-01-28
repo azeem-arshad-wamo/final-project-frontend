@@ -52,11 +52,13 @@ export default function AllPosts() {
           </div>
         )}
       </div>
-      <Pagination
-        currentPage={page}
-        totalPages={pagination.totalPages}
-        onPageChange={handlePageChange}
-      />
+      <div className="p-5">
+        <Pagination
+          currentPage={page}
+          totalPages={pagination.totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </>
   );
 }
