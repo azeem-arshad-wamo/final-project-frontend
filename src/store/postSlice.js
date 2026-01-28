@@ -154,3 +154,4 @@ const postSlice = createSlice({
 export default postSlice.reducer;
 export const selectCurrentUserPosts = (store) => store.posts.currentUserPost;
 export const selectCurrentSelectedPost = (store) => store.posts.selectedPost;
+export const selectAllPosts = (store) => store.posts.posts;
