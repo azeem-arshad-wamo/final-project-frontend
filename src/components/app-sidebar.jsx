@@ -32,11 +32,6 @@ import { getCurrentUser, selectCurrentUser } from "../store/userSlice";
 import { useEffect } from "react";
 
 const data = {
-  user: {
-    name: "Azeem Arshad",
-    email: "azeem.arshad@wamolabs.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Posts",
