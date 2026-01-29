@@ -13,6 +13,19 @@ import {
   getCurrentUserPosts,
   selectCurrentUserPosts,
 } from "../../store/postSlice";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Pencil, Trash2 } from "lucide-react";
 import { selectCurrentUser } from "../../store/userSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -61,18 +74,68 @@ export default function UserPost() {
   );
 }
 
+function DeletePostDialog({ post }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8 text-muted-foreground hover:text-red-500"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete this post?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. The post
+            <span className="font-semibold"> “{post.title}” </span>
+            will be permanently removed.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export function CardSmall({ post, index }) {
   const navigate = useNavigate();
 
   return (
-    <Card size="sm" className="mx-auto w-full max-w-sm">
+    <Card className="relative group mx-auto w-full max-w-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+      <div className="absolute top-3 right-3 flex gap-1 rounded-md bg-background/70 backdrop-blur-sm p-1 opacity-0 group-hover:opacity-100 transition-all">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-muted transition-colors"
+          onClick={() => navigate(`/posts/${post.id}/edit`)}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+
+        <DeletePostDialog
+          post={post}
+          className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
+        />
+      </div>
+
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
         <CardDescription>Post No: {index + 1}</CardDescription>
       </CardHeader>
+
       <CardContent>
-        <p>Total Number of blocks inside this post: {post.blocks.length}</p>
+        <p>Total blocks: {post.blocks.length}</p>
       </CardContent>
+
       <CardFooter>
         <Button
           variant="outline"
