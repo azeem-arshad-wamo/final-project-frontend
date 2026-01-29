@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -156,8 +162,13 @@ export default function Post() {
                 <Card key={comment.id}>
                   <CardHeader>
                     <CardTitle className="text-white">
-                      User: {comment.userId}
+                      {comment.author.fullName}
                     </CardTitle>
+                    {comment.createdAt && (
+                      <p className="text-gray-400 text-sm">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </p>
+                    )}
                   </CardHeader>
                   <CardContent className="text-gray-300">
                     {comment.content}
