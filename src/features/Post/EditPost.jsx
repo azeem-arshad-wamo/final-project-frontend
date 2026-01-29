@@ -9,6 +9,7 @@ import {
 } from "../../store/postSlice";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 export default function Post() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function Post() {
   const post = useSelector(selectCurrentSelectedPost);
   const [blocks, setBlocks] = useState([]);
   const initialized = useRef(false);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -56,6 +58,7 @@ export default function Post() {
       updated[index].data = value;
       return updated;
     });
+    setDirty(true);
   }
 
   function changeToEditing(index) {
@@ -76,6 +79,12 @@ export default function Post() {
       }
       return updated;
     });
+    setDirty(true);
+  }
+
+  function handleSave() {
+    console.log("SAVING");
+    setDirty(false);
   }
 
   return (
@@ -87,6 +96,17 @@ export default function Post() {
             <p className="text-gray-400 text-sm">Post ID: {post.id}</p>
             <hr className="border-gray-700 mt-2" />
           </div>
+
+          {dirty && (
+            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-3xl">
+              <div className="flex items-center justify-between  backdrop-blur-sm text-white px-6 py-3 rounded-xl shadow-md border border-gray-700">
+                <span className="text-sm font-medium">Unsaved changes</span>
+                <Button size="sm" variant="default" onClick={handleSave}>
+                  Save
+                </Button>
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-col gap-2">
             {blocks && blocks.length > 0 ? (
@@ -251,6 +271,17 @@ export default function Post() {
                 No Blocks Found
               </p>
             )}
+          </div>
+          <div className="flex gap-2 flex-wrap mt-4">
+            <div className="flex gap-4 border border-gray-600 p-4 rounded-lg">
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick=""
+              >
+                Submit
+              </Button>
+            </div>
           </div>
         </div>
       </div>
