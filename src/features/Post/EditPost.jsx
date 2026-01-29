@@ -1,15 +1,17 @@
 import { Input } from "@/components/ui/input.jsx";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getPostById,
   selectCurrentSelectedPost,
   selectPostLoading,
+  updatePost,
 } from "../../store/postSlice";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 export default function Post() {
   const { id } = useParams();
@@ -17,12 +19,14 @@ export default function Post() {
   const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
   const [blocks, setBlocks] = useState([]);
+  const [errors, setErrors] = useState(null);
   const [title, setTitle] = useState({
     data: null,
     editing: false,
   });
   const initialized = useRef(false);
   const [dirty, setDirty] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -117,10 +121,29 @@ export default function Post() {
     setDirty(true);
   }
 
-  function handleSave() {
-    console.log("SAVING");
-    console.log(blocks);
-    setDirty(false);
+  async function handleSave() {
+    setErrors(null);
+
+    if (!title.data) {
+      setErrors("Title is needed");
+      return;
+    }
+    if (blocks.length <= 0) {
+      setErrors("Cannot create post with zero blocks");
+      return;
+    }
+    try {
+      const formData = {
+        postId: post.id,
+        title: title.data,
+        blocks,
+      };
+      await dispatch(updatePost(formData)).unwrap();
+      navigate("/user/posts");
+    } catch (error) {
+      console.log(error);
+      setErrors(error || "Failed to create post");
+    }
   }
 
   return (
@@ -128,6 +151,11 @@ export default function Post() {
       <div className="min-h-screen flex flex-col items-center py-10 px-5 text-gray-100">
         <div className="w-full max-w-3xl flex flex-col gap-8">
           <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge variant="destructive" className="text-1xl font-bold">
+                Editing
+              </Badge>
+            </div>
             {title.editing ? (
               <Input
                 value={title.data || ""}
@@ -157,6 +185,11 @@ export default function Post() {
                 <p className="text-gray-400 text-sm">Post ID: {post.id}</p>
                 <hr className="border-gray-700 mt-2" />
               </div>
+            )}
+            {errors && (
+              <p className="text-red-400 text-sm mt-1 bg-red-900 p-2 rounded-md">
+                {errors}
+              </p>
             )}
           </div>
 

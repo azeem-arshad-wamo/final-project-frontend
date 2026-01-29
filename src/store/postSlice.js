@@ -54,6 +54,32 @@ export const deleteUserPost = createAsyncThunk(
   },
 );
 
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/post", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(info),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Could not update post");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (info, { rejectWithValue }) => {
@@ -183,6 +209,17 @@ const postSlice = createSlice({
       store.loading = false;
     });
     builder.addCase(deleteUserPost.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
+    builder.addCase(updatePost.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(updatePost.fulfilled, (store) => {
+      store.loading = false;
+    });
+    builder.addCase(updatePost.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload;
     });
