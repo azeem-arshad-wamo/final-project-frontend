@@ -20,6 +20,7 @@ import {
   selectCurrentSelectedPost,
   selectPostLoading,
 } from "../../store/postSlice";
+import ImageBlock from "../../components/custom/ImageBlock";
 
 export default function Post() {
   const { id } = useParams();
@@ -113,18 +114,8 @@ export default function Post() {
                       </p>
                     );
                   case "image":
-                    return (
-                      <div
-                        key={index}
-                        className="my-4 rounded-lg overflow-hidden shadow-md"
-                      >
-                        <img
-                          src={block.data}
-                          alt="Post Image"
-                          className="w-full object-cover max-h-96"
-                        />
-                      </div>
-                    );
+                    return <ImageBlock key={index} src={block.data} />;
+
                   default:
                     return null;
                 }
