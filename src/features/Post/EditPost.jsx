@@ -35,13 +35,13 @@ export default function Post() {
   }, [id, dispatch]);
 
   useEffect(() => {
-    if (post && !initialized.current) {
+    if (post && String(post.id) === String(id) && !initialized.current) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setBlocks(post.blocks.map((block) => ({ ...block, editing: false })));
       setTitle({ data: post.title, editing: false });
       initialized.current = true;
     }
-  }, [post]);
+  }, [post, id]);
 
   if (loading) {
     return (
