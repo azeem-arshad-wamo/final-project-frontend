@@ -1,10 +1,258 @@
-import React from "react";
+import { Input } from "@/components/ui/input.jsx";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import {
+  getPostById,
+  selectCurrentSelectedPost,
+  selectPostLoading,
+} from "../../store/postSlice";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
 
-export default function EditPost() {
+export default function Post() {
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const loading = useSelector(selectPostLoading);
+  const post = useSelector(selectCurrentSelectedPost);
+  const [blocks, setBlocks] = useState([]);
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getPostById(id));
+    }
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    if (post && !initialized.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setBlocks(post.blocks.map((block) => ({ ...block, editing: false })));
+      initialized.current = true;
+    }
+  }, [post]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <h1 className="text-2xl text-muted-foreground">Loading post…</h1>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <>
+        <div className="flex items-center justify-center h-full">
+          <h1 className="text-3xl">Could not find the post</h1>
+        </div>
+      </>
+    );
+  }
+
+  function updateBlock(index, value) {
+    setBlocks((prev) => {
+      const updated = [...prev];
+      updated[index].data = value;
+      return updated;
+    });
+  }
+
+  function changeToEditing(index) {
+    setBlocks((prev) => {
+      const updated = [...prev];
+      updated[index].editing = true;
+      return updated;
+    });
+  }
+
+  function finishUpdating(index) {
+    setBlocks((prev) => {
+      const updated = [...prev];
+      if (!updated[index].data) {
+        updated.splice(index, 1);
+      } else {
+        updated[index] = { ...updated[index], editing: false };
+      }
+      return updated;
+    });
+  }
+
   return (
     <>
-      <div>
-        <h1>Editing Post</h1>
+      <div className="min-h-screen flex flex-col items-center py-10 px-5 text-gray-100">
+        <div className="w-full max-w-3xl flex flex-col gap-8">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-5xl font-extrabold text-white">{post.title}</h1>
+            <p className="text-gray-400 text-sm">Post ID: {post.id}</p>
+            <hr className="border-gray-700 mt-2" />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {blocks && blocks.length > 0 ? (
+              blocks.map((block, index) => {
+                switch (block.type) {
+                  case "heading":
+                    if (block.editing) {
+                      return (
+                        <Input
+                          type="text"
+                          key={`block-${index}`}
+                          placeholder="Heading"
+                          value={block.data}
+                          className="text-4xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                          onChange={(e) => updateBlock(index, e.target.value)}
+                          onBlur={() => finishUpdating(index)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") finishUpdating(index);
+                          }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <p
+                          className="text-4xl font-bold text-white"
+                          key={index}
+                          onClick={() => changeToEditing(index)}
+                        >
+                          {block.data}
+                        </p>
+                      );
+                    }
+
+                  case "sub-heading":
+                    if (block.editing) {
+                      return (
+                        <Input
+                          type="text"
+                          placeholder="Sub-heading"
+                          value={block.data}
+                          className="text-3xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                          onChange={(e) => updateBlock(index, e.target.value)}
+                          onBlur={() => finishUpdating(index)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") finishUpdating(index);
+                          }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <p
+                          className="text-2xl font-semibold text-gray-200"
+                          key={index}
+                          onClick={() => changeToEditing(index)}
+                        >
+                          {block.data}
+                        </p>
+                      );
+                    }
+
+                  case "text":
+                    if (block.editing) {
+                      return (
+                        <Input
+                          type="text"
+                          placeholder="Text"
+                          value={block.data}
+                          className="text-base placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                          onChange={(e) => updateBlock(index, e.target.value)}
+                          onBlur={() => finishUpdating(index)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") finishUpdating(index);
+                          }}
+                        />
+                      );
+                    } else {
+                      return (
+                        <p
+                          className="text-gray-300 leading-relaxed text-lg"
+                          key={index}
+                          onClick={() => changeToEditing(index)}
+                        >
+                          {block.data}
+                        </p>
+                      );
+                    }
+
+                  case "image":
+                    if (block.editing) {
+                      return (
+                        <div className="flex flex-col gap-2 w-full">
+                          <Input
+                            type="text"
+                            placeholder="Add image URL"
+                            value={block.data}
+                            onChange={(e) => updateBlock(index, e.target.value)}
+                            className="w-full bg-gray-700 text-white placeholder:text-gray-400 rounded-md focus:ring-2 focus:ring-indigo-500"
+                          />
+
+                          <span className="text-gray-400 text-sm">OR</span>
+
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files[0]) {
+                                const file = e.target.files[0];
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                  updateBlock(index, reader.result);
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                            className="w-full text-white"
+                          />
+
+                          {block.data && (
+                            <AspectRatio
+                              ratio={16 / 9}
+                              className="w-full rounded-lg overflow-hidden shadow-md"
+                            >
+                              <img
+                                src={block.data}
+                                alt="Image"
+                                className="object-cover w-full h-full"
+                              />
+                            </AspectRatio>
+                          )}
+
+                          <Button
+                            variant="outline"
+                            onClick={() => finishUpdating(index)}
+                            className="mt-2 border-white text-white hover:bg-indigo-600 hover:text-white"
+                          >
+                            Done
+                          </Button>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={index}
+                          className="my-4 rounded-lg overflow-hidden shadow-md"
+                          onClick={() => changeToEditing(index)}
+                        >
+                          <img
+                            src={block.data}
+                            alt="Post Image"
+                            className="w-full object-cover max-h-96"
+                          />
+                        </div>
+                      );
+                    }
+
+                  default:
+                    return null;
+                }
+              })
+            ) : (
+              <p className="text-2xl font-bold text-gray-400">
+                No Blocks Found
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );
