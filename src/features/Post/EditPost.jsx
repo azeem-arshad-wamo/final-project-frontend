@@ -17,6 +17,10 @@ export default function Post() {
   const loading = useSelector(selectPostLoading);
   const post = useSelector(selectCurrentSelectedPost);
   const [blocks, setBlocks] = useState([]);
+  const [title, setTitle] = useState({
+    data: null,
+    editing: false,
+  });
   const initialized = useRef(false);
   const [dirty, setDirty] = useState(false);
 
@@ -30,6 +34,7 @@ export default function Post() {
     if (post && !initialized.current) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setBlocks(post.blocks.map((block) => ({ ...block, editing: false })));
+      setTitle({ data: post.title, editing: false });
       initialized.current = true;
     }
   }, [post]);
@@ -92,9 +97,36 @@ export default function Post() {
       <div className="min-h-screen flex flex-col items-center py-10 px-5 text-gray-100">
         <div className="w-full max-w-3xl flex flex-col gap-8">
           <div className="flex flex-col gap-1">
-            <h1 className="text-5xl font-extrabold text-white">{post.title}</h1>
-            <p className="text-gray-400 text-sm">Post ID: {post.id}</p>
-            <hr className="border-gray-700 mt-2" />
+            {title.editing ? (
+              <Input
+                value={title.data || ""}
+                onChange={(e) => {
+                  setTitle((prev) => ({ ...prev, data: e.target.value }));
+                  setDirty(true);
+                }}
+                placeholder="Enter the title..."
+                className="text-5xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md bg-gray-800 text-white"
+                onBlur={() => {
+                  if (title.data)
+                    setTitle((prev) => ({ ...prev, editing: false }));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && title.data)
+                    setTitle((prev) => ({ ...prev, editing: false }));
+                }}
+              />
+            ) : (
+              <div
+                onClick={() => setTitle((prev) => ({ ...prev, editing: true }))}
+                className="cursor-text"
+              >
+                <h1 className="text-5xl font-extrabold text-white">
+                  {title.data || "Untitled Post"}
+                </h1>
+                <p className="text-gray-400 text-sm">Post ID: {post.id}</p>
+                <hr className="border-gray-700 mt-2" />
+              </div>
+            )}
           </div>
 
           {dirty && (
