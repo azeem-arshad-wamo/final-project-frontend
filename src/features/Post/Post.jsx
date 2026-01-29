@@ -14,19 +14,6 @@ import {
   selectCurrentSelectedPost,
   selectPostLoading,
 } from "../../store/postSlice";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Check, Pencil, Trash2 } from "lucide-react";
-// import { updateComment, deleteComment } from "../../store/commentSlice";
 
 export default function Post() {
   const { id } = useParams();
@@ -166,12 +153,16 @@ export default function Post() {
 
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <CommentCard
-                  key={comment.id}
-                  comment={comment}
-                  postId={id}
-                  dispatch={dispatch}
-                />
+                <Card key={comment.id}>
+                  <CardHeader>
+                    <CardTitle className="text-white">
+                      User: {comment.userId}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-gray-300">
+                    {comment.content}
+                  </CardContent>
+                </Card>
               ))
             ) : (
               <p className="text-gray-400 mt-2">No comments yet</p>
@@ -180,110 +171,5 @@ export default function Post() {
         </div>
       </div>
     </>
-  );
-}
-
-function CommentCard({ comment, postId, dispatch }) {
-  const [editing, setEditing] = useState(false);
-  const [content, setContent] = useState(comment.content);
-  const [error, setError] = useState(null);
-
-  async function handleSave() {
-    if (!content.trim()) {
-      setError("Comment cannot be empty");
-      return;
-    }
-
-    try {
-      await dispatch(
-        updateComment({ commentId: comment.id, content }),
-      ).unwrap();
-      setEditing(false);
-      dispatch(fetchCurrentPostComments(postId));
-    } catch (err) {
-      setError(err.message || "Failed to update comment");
-    }
-  }
-
-  async function handleDelete() {
-    try {
-      await dispatch(deleteComment(comment.id)).unwrap();
-      dispatch(fetchCurrentPostComments(postId));
-    } catch (err) {
-      setError(err.message || "Failed to delete comment");
-    }
-  }
-
-  return (
-    <Card className="relative group w-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-      <div className="absolute top-3 right-3 flex gap-1 rounded-md bg-background/70 backdrop-blur-sm p-1 opacity-0 group-hover:opacity-100 transition-all">
-        {editing ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-green-400 hover:text-green-500"
-            onClick={handleSave}
-          >
-            <Check className="h-4 w-4" />
-          </Button>
-        ) : (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-muted transition-colors"
-            onClick={() => setEditing(true)}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-        )}
-
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-8 w-8 text-muted-foreground hover:text-red-500"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. The comment will be permanently
-                removed.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} variant="destructive">
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-
-      <CardHeader>
-        <CardTitle className="text-white">User: {comment.userId}</CardTitle>
-      </CardHeader>
-
-      <CardContent className="text-gray-300">
-        {editing ? (
-          <Input
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full bg-gray-700 text-white placeholder:text-gray-400"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSave();
-            }}
-          />
-        ) : (
-          <p>{comment.content}</p>
-        )}
-        {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
-      </CardContent>
-    </Card>
   );
 }

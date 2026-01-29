@@ -76,6 +76,32 @@ export const fetchCurrentUserComments = createAsyncThunk(
   },
 );
 
+export const updateComment = createAsyncThunk(
+  "comments/updateComment",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3000/comment", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(info),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Could not update comment");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -114,6 +140,18 @@ const commentSlice = createSlice({
       store.userComments = action.payload;
     });
     builder.addCase(fetchCurrentUserComments.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload.comments;
+    });
+    builder.addCase(updateComment.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(updateComment.fulfilled, (store) => {
+      store.loading = false;
+    });
+
+    builder.addCase(updateComment.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload.comments;
     });
