@@ -102,6 +102,28 @@ export const updateComment = createAsyncThunk(
   },
 );
 
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:3000/comment/${info}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Could not delete comment");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -152,6 +174,18 @@ const commentSlice = createSlice({
     });
 
     builder.addCase(updateComment.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload.comments;
+    });
+    builder.addCase(deleteComment.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(deleteComment.fulfilled, (store) => {
+      store.loading = false;
+    });
+
+    builder.addCase(deleteComment.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload.comments;
     });
