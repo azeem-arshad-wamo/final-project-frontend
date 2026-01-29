@@ -64,9 +64,9 @@ export default function UserPost() {
         {post &&
           post.posts &&
           post.posts.length > 0 &&
-          post.posts.map((post, index) => (
+          post.posts.map((post) => (
             // Something here
-            <CardSmall post={post} index={index} />
+            <CardSmall post={post} />
             // Something also here
           ))}
       </div>
@@ -75,6 +75,10 @@ export default function UserPost() {
 }
 
 function DeletePostDialog({ post }) {
+  function handlePostDeletion() {
+    console.log(`Post ID: ${post.id}`);
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -99,14 +103,19 @@ function DeletePostDialog({ post }) {
 
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
+          <AlertDialogAction
+            onClick={() => handlePostDeletion()}
+            variant="destructive"
+          >
+            Delete
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
 
-export function CardSmall({ post, index }) {
+export function CardSmall({ post }) {
   const navigate = useNavigate();
 
   return (
@@ -129,7 +138,7 @@ export function CardSmall({ post, index }) {
 
       <CardHeader>
         <CardTitle>{post.title}</CardTitle>
-        <CardDescription>Post No: {index + 1}</CardDescription>
+        <CardDescription>Post Id: {post.id}</CardDescription>
       </CardHeader>
 
       <CardContent>
