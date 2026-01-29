@@ -134,6 +134,32 @@ export function CardSmall({ post, index }) {
 
       <CardContent>
         <p>Total blocks: {post.blocks.length}</p>
+        <p className="text-gray-400 text-sm">
+          Created:{" "}
+          {(() => {
+            const created = new Date(post.createdAt);
+            const now = new Date();
+            const diffMs = now - created;
+            const diffHours = diffMs / (1000 * 60 * 60);
+
+            if (diffHours < 24) {
+              if (diffHours < 1) {
+                const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                return diffMinutes <= 0
+                  ? "Just now"
+                  : `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+              }
+              const hours = Math.floor(diffHours);
+              return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+            } else {
+              return created.toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              });
+            }
+          })()}
+        </p>
       </CardContent>
 
       <CardFooter>
