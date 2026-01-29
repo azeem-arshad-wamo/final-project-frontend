@@ -178,7 +178,7 @@ export default function NewPost() {
                         type="text"
                         placeholder="Sub-heading"
                         value={block.data}
-                        className="text-3xl font-semibold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
+                        className="text-3xl font-bold placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-md py-1 bg-gray-700 text-white w-full"
                         onChange={(e) => updateBlock(index, e.target.value)}
                         onBlur={() => finishUpdating(index)}
                         onKeyDown={(e) => {
@@ -250,10 +250,10 @@ export default function NewPost() {
                       </div>
                     ))
                   : (block.type === "heading" && (
-                      <h1 className="text-4xl ">{block.data}</h1>
+                      <h1 className="text-4xl font-bold ">{block.data}</h1>
                     )) ||
                     (block.type === "sub-heading" && (
-                      <h2 className="text-2xl">{block.data}</h2>
+                      <h2 className="text-2xl font-semibold">{block.data}</h2>
                     )) ||
                     (block.type === "text" && <p>{block.data}</p>) ||
                     (block.type === "image" && (
