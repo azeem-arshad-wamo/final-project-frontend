@@ -55,13 +55,7 @@ const data = {
     },
   ],
   navSecondary: [],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-  ],
+  projects: [],
 };
 
 export function AppSidebar({ ...props }) {
@@ -107,7 +101,7 @@ export function AppSidebar({ ...props }) {
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
