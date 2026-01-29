@@ -1,32 +1,44 @@
 import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
-import Home from "./features/Home/Home.jsx";
-import Login from "./features/Login/Login.jsx";
-import SignUp from "./features/Signup/SignUp.jsx";
-import NewPost from "./features/NewPost/NewPost.jsx";
-import UserPost from "./features/UserPost/UserPost.jsx";
-import Post from "./features/Post/Post.jsx";
-import AllPosts from "./features/AllPosts/AllPosts.jsx";
-import UserComments from "./features/UserComments/UserComments.jsx";
-import EditPost from "./features/Post/EditPost.jsx";
+import { lazy, Suspense } from "react";
+
+const Home = lazy(() => import("./features/Home/Home.jsx"));
+const Login = lazy(() => import("./features/Login/Login.jsx"));
+const SignUp = lazy(() => import("./features/Signup/SignUp.jsx"));
+const NewPost = lazy(() => import("./features/NewPost/NewPost.jsx"));
+const UserPost = lazy(() => import("./features/UserPost/UserPost.jsx"));
+const Post = lazy(() => import("./features/Post/Post.jsx"));
+const AllPosts = lazy(() => import("./features/AllPosts/AllPosts.jsx"));
+const UserComments = lazy(
+  () => import("./features/UserComments/UserComments.jsx"),
+);
+const EditPost = lazy(() => import("./features/Post/EditPost.jsx"));
 
 export default function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-screen">
+              Loading…
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/" element={<Home />}>
-            <Route path="/" element={<AllPosts />} />
+            <Route path="/" element={<Home />}>
+              <Route path="/" element={<AllPosts />} />
 
-            <Route path="/post/create" element={<NewPost />} />
-            <Route path="/user/posts" element={<UserPost />} />
-            <Route path="/posts/:id" element={<Post />} />
-            <Route path="/user/comments" element={<UserComments />} />
-            <Route path="/posts/:id/edit" element={<EditPost />} />
-          </Route>
-        </Routes>
+              <Route path="/post/create" element={<NewPost />} />
+              <Route path="/user/posts" element={<UserPost />} />
+              <Route path="/posts/:id" element={<Post />} />
+              <Route path="/user/comments" element={<UserComments />} />
+              <Route path="/posts/:id/edit" element={<EditPost />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );
