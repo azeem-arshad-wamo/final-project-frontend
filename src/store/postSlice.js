@@ -32,6 +32,28 @@ export const fetchAllPosts = createAsyncThunk(
   },
 );
 
+export const deleteUserPost = createAsyncThunk(
+  "posts/deleteUserPost",
+  async (info, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:3000/post/${info}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.message || "Couldn't make the delete");
+      }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (info, { rejectWithValue }) => {
@@ -150,6 +172,17 @@ const postSlice = createSlice({
       store.loading = false;
     });
     builder.addCase(fetchAllPosts.rejected, (store, action) => {
+      store.loading = false;
+      store.error = action.payload;
+    });
+    builder.addCase(deleteUserPost.pending, (store) => {
+      store.loading = true;
+      store.error = null;
+    });
+    builder.addCase(deleteUserPost.fulfilled, (store) => {
+      store.loading = false;
+    });
+    builder.addCase(deleteUserPost.rejected, (store, action) => {
       store.loading = false;
       store.error = action.payload;
     });

@@ -7,9 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteUserPost,
   getCurrentUserPosts,
   selectCurrentUserPosts,
 } from "../../store/postSlice";
@@ -33,6 +34,7 @@ export default function UserPost() {
   const dispatch = useDispatch();
   const post = useSelector(selectCurrentUserPosts);
   const user = useSelector(selectCurrentUser);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     dispatch(getCurrentUserPosts());
@@ -66,7 +68,7 @@ export default function UserPost() {
           post.posts.length > 0 &&
           post.posts.map((post) => (
             // Something here
-            <CardSmall post={post} />
+            <CardSmall post={post} setError={setError} error={error} />
             // Something also here
           ))}
       </div>
@@ -74,9 +76,18 @@ export default function UserPost() {
   );
 }
 
-function DeletePostDialog({ post }) {
-  function handlePostDeletion() {
-    console.log(`Post ID: ${post.id}`);
+function DeletePostDialog({ post, setError }) {
+  const dispatch = useDispatch();
+
+  async function handlePostDeletion() {
+    if (!post.id) return;
+
+    try {
+      await dispatch(deleteUserPost(post.id)).unwrap();
+      dispatch(getCurrentUserPosts());
+    } catch (error) {
+      setError(error.message);
+    }
   }
 
   return (
@@ -115,7 +126,7 @@ function DeletePostDialog({ post }) {
   );
 }
 
-export function CardSmall({ post }) {
+export function CardSmall({ post, setError, error }) {
   const navigate = useNavigate();
 
   return (
@@ -132,6 +143,7 @@ export function CardSmall({ post }) {
 
         <DeletePostDialog
           post={post}
+          setError={setError}
           className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
         />
       </div>
@@ -142,6 +154,11 @@ export function CardSmall({ post }) {
       </CardHeader>
 
       <CardContent>
+        {error && (
+          <p className="text-red-400 text-sm mt-1 bg-red-900 p-2 rounded-md">
+            {error}
+          </p>
+        )}
         <p>Total blocks: {post.blocks.length}</p>
         <p className="text-gray-400 text-sm">
           Created:{" "}
