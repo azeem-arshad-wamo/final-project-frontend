@@ -57,6 +57,36 @@ export default function Post() {
     );
   }
 
+  function addBlocks(type) {
+    switch (type) {
+      case "heading":
+        setBlocks((prev) => [
+          ...prev,
+          { type: "heading", data: "", editing: true },
+        ]);
+        break;
+      case "sub-heading":
+        setBlocks((prev) => [
+          ...prev,
+          { type: "sub-heading", data: "", editing: true },
+        ]);
+        break;
+      case "text":
+        setBlocks((prev) => [
+          ...prev,
+          { type: "text", data: "", editing: true },
+        ]);
+        break;
+      case "image":
+        setBlocks((prev) => [
+          ...prev,
+          { type: "image", data: "", editing: true },
+        ]);
+        break;
+    }
+    setDirty(true);
+  }
+
   function updateBlock(index, value) {
     setBlocks((prev) => {
       const updated = [...prev];
@@ -89,6 +119,7 @@ export default function Post() {
 
   function handleSave() {
     console.log("SAVING");
+    console.log(blocks);
     setDirty(false);
   }
 
@@ -305,13 +336,34 @@ export default function Post() {
             )}
           </div>
           <div className="flex gap-2 flex-wrap mt-4">
-            <div className="flex gap-4 border border-gray-600 p-4 rounded-lg">
+            <div className="flex gap-4 border border-gray-600 p-4 rounded-lg flex-wrap">
               <Button
                 variant="outline"
                 className="text-white border-white hover:bg-indigo-600 hover:text-white"
-                onClick=""
+                onClick={() => addBlocks("heading")}
               >
-                Submit
+                Heading
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("sub-heading")}
+              >
+                Sub-Heading
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("text")}
+              >
+                Text
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white border-white hover:bg-indigo-600 hover:text-white"
+                onClick={() => addBlocks("image")}
+              >
+                Image
               </Button>
             </div>
           </div>
